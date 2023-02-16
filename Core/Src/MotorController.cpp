@@ -4,6 +4,8 @@
 
 namespace stepping_md
 {
+	std::list<MotorController> MotorController::instances;
+
     void MotorController::update_position(){
         //現在の位置を更新する
         //開始時間から計算する
@@ -76,19 +78,17 @@ namespace stepping_md
         update_position();
         //設定の取得
         speed = _speed;
-        stepping_md::MotorParam motor_param;
-        params.get_motor_params(&motor_param);
+        stepping_md::MotorParam motor_param = params.get_motor_param();
 
         //pwmの周期を設定する
-        pwm_tim->Instance->ARR = (uint32_t)(HAL_RCC_GetPCLK1Freq()/speed/motor_param.ppr);
+        pwm_tim->Instance->ARR = (uint32_t)(HAL_RCC_GetPCLK1Freq()/pwm_tim->Instance->PSC/speed/motor_param.ppr);
     }
 
     void MotorController::update(){
         //現在の位置を更新する
         update_position();
 
-        stepping_md::MotorParam motor_param;
-        params.get_motor_params(&motor_param);
+        stepping_md::MotorParam motor_param = params.get_motor_param();
         //目標位置に到達しているか確認する
         if(abs(motor_param.target - positon) < error_threshold){
             //目標位置に到達している場合は停止する
@@ -102,6 +102,18 @@ namespace stepping_md
 
     void MotorController::set_register(const Parameters& params){
         this->params = params;
+    }
+
+    void MotorController::trigger_emergency_callback(void){
+    	for(MotorController controller : instances){
+    		controller.emergency_callback();
+    	}
+    }
+
+    void MotorController::trigger_update(void){
+    	for(MotorController controller : instances){
+    		controller.update();
+    	}
     }
 
 } // namespace stapping_md

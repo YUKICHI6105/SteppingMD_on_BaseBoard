@@ -10,6 +10,7 @@
 ### 機材
 - [ステッピングモータードライバ](https://www.amazon.co.jp/Quimat-TB6600-%E3%82%B9%E3%83%86%E3%83%83%E3%83%94%E3%83%B3%E3%82%B0-%E3%82%B3%E3%83%B3%E3%83%88%E3%83%AD%E3%83%BC%E3%83%A9%E3%83%BC-9V-40V/dp/B06XSBB45M)
 - [BaseBoard ver4.0](https://github.com/tk20e/Base-Board-ver4.0-hw.git)
+- [EMSBoard](https//github.com/Tomozawa/EMSBoard.git)
 - ステッピングモータードライバ用ハーネス
 
 ### 接続
@@ -29,6 +30,9 @@
 
 上記の接続を行うケーブルを「ステッピングモータードライバ用ハーネス」と呼びます。
 
+### EMSBoard
+リポジトリのREADMEに従ってEMSBoardをBaseBoardに正しく接続してください。EMSBoardが使用できない場合、ソースコードを書き換えてEMS信号を受信しないよう設定してください。
+
 ## ソフトウェア要件
 ### CAN
 CAN通信には標準IDを用いる2.0Aを使用し、ボーレートは1Mbpsです。
@@ -39,15 +43,15 @@ CAN通信には標準IDを用いる2.0Aを使用し、ボーレートは1Mbpsで
 | -------- | ------- | -------- | ------- | ------- |
 | BID | MotorA | cmd | uint8_t | 動作モードを指定します |
 | BID+1 | MotorA | target | float | 各モードで解釈が異なります |
-| BID+2 | MotorA | diagnostic | byte[8] | 標準出力として使えます |
+| BID+2 | MotorA | reserved |  | 予約 |
 | BID+3 | MotorA | ack | uint32_t | cmd送出の結果です。0:正常終了 |
 | BID+4 | MotorC | cmd | uint8_t | 動作モードを指定します |
 | BID+5 | MotorC | target | float | 各モードで解釈が異なります |
-| BID+6 | MotorC | diagnostic | byte[8] | 標準出力として使えます |
+| BID+6 | MotorC | reserved |  | 予約 |
 | BID+7 | MotorC | ack | uint32_t | cmd送出の結果です。0:正常終了 |
 | BID+8 | MotorE | cmd | uint8_t | 動作モードを指定します |
 | BID+9 | MotorE | target | float | 各モードで解釈が異なります |
-| BID+10 | MotorE | diagnostic | byte[8] | 標準出力として使えます |
+| BID+10 | MotorE | reserved |  | 予約 |
 | BID+11 | MotorE | ack | uint32_t | cmd送出の結果です。0:正常終了 |
 
 以降BID、BID+4、BID+8をそれぞれ、BIDA、BIDC、BIDEと定義します。
@@ -65,3 +69,6 @@ modeの種類とそれぞれのmodeに対応するcmdの値およびtargetの意
 | パラメーター | データ型 | 説明 |
 | ------- | ------- | ------- |
 | PPR | uint8_t | ステッピングモーターが一回転するのに必要なパルス数 |
+
+### EMS信号の無効化(非推奨)
+```wrapper.cpp```のマクロ関数```IS_EMERGENCY()```の定義を```(HAL_GPIO_ReadPin(EMS_GPIO_Port, EMS_Pin) == GPIO_Pin_RESET)```から```(false)```に変えてください。

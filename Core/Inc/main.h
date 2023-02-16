@@ -46,7 +46,7 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-#define MotorControllerTest
+
 /* USER CODE END EM */
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
@@ -59,6 +59,15 @@ void wrapper_cpp(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define LED_CAN_Pin GPIO_PIN_14
+#define LED_CAN_GPIO_Port GPIOC
+#define EMS_Pin GPIO_PIN_4
+#define EMS_GPIO_Port GPIOA
+#define EMS_EXTI_IRQn EXTI4_IRQn
+#define LED0_Pin GPIO_PIN_0
+#define LED0_GPIO_Port GPIOB
+#define LED1_Pin GPIO_PIN_1
+#define LED1_GPIO_Port GPIOB
 #define DIRE_Pin GPIO_PIN_10
 #define DIRE_GPIO_Port GPIOB
 #define ENAC_Pin GPIO_PIN_13
